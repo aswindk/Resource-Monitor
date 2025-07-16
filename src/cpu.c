@@ -14,9 +14,9 @@ FIELD_INDEX		VALUE		MEANING
 */
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+#include <stdio.h> // Includes standard I/O library functions like fopen, fgets, sscanf, and printf 
+#include <stdlib.h> //Includes functions like exit() and standard constants like EXIT_FAILURE
+#include <unistd.h> //Provides access to system calls and functions like sleep()
 #include "cpu.h"
 
 void get_cpu_times(unsigned long long *idle, unsigned long long *total){
@@ -28,6 +28,7 @@ void get_cpu_times(unsigned long long *idle, unsigned long long *total){
 
     char buffer[256];
     fgets(buffer, sizeof(buffer),fp); //Reads the first line that starts with CPU....
+    //Reads one line from the file into buffer
     fclose(fp);
 
     char cpu_label[5];
@@ -37,9 +38,9 @@ void get_cpu_times(unsigned long long *idle, unsigned long long *total){
            cpu_label, &user, &nice, &system, &idle_time, &iowait, &irq, &softirq, &steal);
 
 
-    *idle = idle_time + iowait;
+    *idle = idle_time + iowait; // Sum of idle and iowait gives total time the CPU was not actively doing useful work.
     *total = user + nice + system + *idle + irq + softirq + steal;
-
+    //Total time includes all the measured times. This is used as the denominator to calculate percentage usage.
 }
 
 double calculate_cpu_usage() {
@@ -50,6 +51,9 @@ double calculate_cpu_usage() {
 
     double delta_total = total2 - total1;
     double delta_idle  = idle2 - idle1;
+
+    //Calculates how much time passed in total and how much of that time was idle.
+    //These deltas represent the activity during the 1-second window.
 
     if (delta_total == 0) return 0.0;
     return 100.0 * (delta_total - delta_idle) / delta_total;
