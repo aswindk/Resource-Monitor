@@ -3,22 +3,24 @@
 #include <unistd.h>
 #include "mem.h"
 
-void get_mem_info(){
-    unsigned long long *mdata;
-
-    FILE *fp = fopen("/proc/meminfo","r");
-    if(!fp){
+double get_mem_info() {
+    FILE *fp = fopen("/proc/meminfo", "r");
+    if (!fp) {
         perror("fopen");
         exit(EXIT_FAILURE);
     }
 
-    char buffer[256];
-    fgets(buffer, sizeof(buffer),fp);  
+    char line[256];
+    long memTotal = 0, memAvailable = 0;
+
+    while (fgets(line, sizeof(line), fp)) {
+        if (sscanf(line, "MemTotal: %ld kB", &memTotal) == 1) continue;
+        if (sscanf(line, "MemAvailable: %ld kB", &memAvailable) == 1) continue;
+    }
     fclose(fp);
 
-    char memdata[]
+    long used = memTotal - memAvailable;
+    double used_percent = (double)used / memTotal * 100.0;
 
-    
+    return used_percent;
 }
-
-
