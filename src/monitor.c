@@ -6,7 +6,7 @@ int main() {
     while (1) {
         double usage = calculate_cpu_usage();
         printf("CPU Usage: %.2f%%\n", usage);
-         int width_cpu_bar = 50;
+         int width_cpu_bar = 50; //logic for progress bar
             int filled_cpu_bar = (int)(usage/100.0 * width_cpu_bar);
             printf("[");
 
@@ -17,7 +17,6 @@ int main() {
             }
 
              printf("] %.2f%%\n", usage);
-
         double mem_usage = get_mem_info();
         printf("Memory Usage: %.2f%%\n", mem_usage);
 
