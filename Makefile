@@ -1,12 +1,29 @@
+CXX = g++
 CC = gcc
 CFLAGS = -Wall -Wextra -I./src
-SRC = src/monitor.c src/cpu.c src/utils.c src/mem.c
+CXXFLAGS = -Wall -Wextra -I./src
+
+SRC_C = src/cpu.c src/mem.c src/utils.c
+SRC_CPP = src/graph.cpp src/ui.cpp
+
+OBJ_C = $(SRC_C:.c=.o)
+OBJ_CPP = $(SRC_CPP:.cpp=.o)
+
 TARGET = resmon
 
 all: $(TARGET)
 
-$(TARGET): $(SRC)
-	$(CC) $(CFLAGS) -o $(TARGET) $(SRC)
+# Compile C objects
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Compile C++ objects
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Link everything
+$(TARGET): $(OBJ_C) $(OBJ_CPP)
+	$(CXX) -o $(TARGET) $(OBJ_C) $(OBJ_CPP) -lncurses -pthread
 
 clean:
-	rm -f $(TARGET)
+	rm -f $(TARGET) $(OBJ_C) $(OBJ_CPP)
